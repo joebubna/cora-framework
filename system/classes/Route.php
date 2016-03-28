@@ -218,7 +218,7 @@ class Route extends Framework
         
         // If the config specifies an application specific class that extends Cora, load that.
         if ($this->config['cora_extension'] != '') {
-            require_once($this->config['pathToExtensions'].$this->config['cora_extension'].'.php');
+            require_once($this->config['pathToCora'].'extensions/'.$this->config['cora_extension'].'.php');
         }
         
         // Include the controller code.

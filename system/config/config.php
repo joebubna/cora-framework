@@ -82,9 +82,9 @@ $config['pathToControllers'] = $config['basedir'].'controllers/';
 $config['pathToLibraries'] = $config['basedir'].'libraries/';
 
 /**
- *  Path to Extensions directory relative to this file.
+ *  Path to App's Cora directory relative to this file.
  */
-$config['pathToExtensions'] = $config['basedir'].'extensions/';
+$config['pathToCora'] = $config['basedir'].'cora/';
 
 
 /**

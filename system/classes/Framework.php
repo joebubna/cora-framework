@@ -12,7 +12,7 @@ class Framework {
         require(dirname(__FILE__).'/../config/config.php');
         
         // Load custom app config
-        include(dirname(__FILE__).'/../../config/config.php');
+        include($config['basedir'].'cora/config/config.php');
         
         // Store config settings as data member.
         $this->config = $config;
