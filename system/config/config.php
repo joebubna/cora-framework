@@ -59,7 +59,7 @@ $config['enable_RESTful'] = true;
  *  The only conceivable reason you might want to change this is if you aren't using composer or the demo
  *  project to install Cora, and instead are placing the Cora system files in some custom place.
  */
-$config['basedir'] = dirname(__FILE__).'/../../../../../../';
+$config['basedir'] = dirname(__FILE__).'/../../../../../';
 
 /**
  *  Path to models/classes directory relative to this file.
