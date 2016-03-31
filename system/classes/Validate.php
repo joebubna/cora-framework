@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Library;
 
 
@@ -27,6 +27,7 @@ class Validate
             $this->data = $_POST;
         else 
             $this->data = $data;
+        
         // Init stuff.
         $this->errors = array();
         $this->lang = new \stdClass();
@@ -40,7 +41,7 @@ class Validate
      *  Passes list of errors to calling controller.
      *  Returns TRUE if all checks passed. False otherwise.
      */
-    public function run()
+    public function run() 
     {
         if (count($this->errors) == 0) {
             return true;
@@ -48,7 +49,7 @@ class Validate
         else {
             $this->controller->setData('errors', $this->errors);
             return false;
-        }
+        }       
     }
     
     
@@ -70,7 +71,7 @@ class Validate
         foreach ($checks as $check) {
             
             if (is_array($check)) {
-
+                
                 // Grab custom check type. Ex. "call"
                 $custom = '_'.$check[0];
                 
@@ -80,7 +81,7 @@ class Validate
                 // Add the fieldData to the front of the array
                 array_unshift($check, $fieldData);
                 
-                // Call the custom check.
+                // Call the custom check. 
                 $checkResult = call_user_func_array(array($this, $custom), $check);
             }
             else {
@@ -88,7 +89,7 @@ class Validate
                 $check = '_'.$check;
                 
                 // Call a built-in check that's part of this Validation class.
-                $checkResult = $this->$check($fieldData, $humanName);
+                $checkResult = $this->$check($fieldData, $humanName);    
             }
             
             // If the result of the called check is anything other than FALSE, set a validation error.
@@ -225,28 +226,5 @@ class Validate
         $fieldData = trim($fieldData);
         return false;
     }
-
-    // valid_email
-    protected function _valid_email($fieldData, $humanName)
-    {
-        echo $fieldData;
-        if (preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}/', $fieldData)) {
-            return false;
-        }
-        return "Valid $humanName required";
-    }
-
-    // mathces
-    protected function _matches($fieldData, $humanName, $array)
-    {
-        var_dump($array);
-    }
-
-
-    // matches[password]
-    // min_length[5]
-    // max_length[12]
-    // PHP single arg functions like: htmlspecialchars, trim
-    // Custom functions
     
 }
