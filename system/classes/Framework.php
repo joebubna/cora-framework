@@ -8,11 +8,14 @@ class Framework {
     
     function __construct() {
     
-        // Load and set config.
+        // Load and set cora config.
         require(dirname(__FILE__).'/../config/config.php');
-        include(dirname(__FILE__).'/../../config/config.php');
-        $this->config = $config;
         
+        // Load custom app config
+        include($config['basedir'].'cora/config/config.php');
+        
+        // Store config settings as data member.
+        $this->config = $config;
     }
     
     protected function debug($message = '', $newLine = true) {

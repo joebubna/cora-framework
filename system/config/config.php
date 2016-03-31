@@ -12,6 +12,12 @@ $config['debugHide'] = false; // Hides debug info in HTML comments so you have t
  *  set this to '/app/'
  *
  *  DONT FORGET ENDING SLASH!!!
+ *
+ *  Note: This has nothing (directly) to do with the directory structure on your server.
+ *  This tells Cora where in the URL to start looking for a controller.
+ *  WWW.MYSITE.COM/APP/controller/method/id
+ *  If site_url is set to '/app/' then the uppercase part of the url above will be ignored
+ *  by the router.
  */
 $config['site_url'] = '/cora/';
 
@@ -45,31 +51,40 @@ $config['template'] = 'template';
  */
 $config['enable_RESTful'] = true;
 
+/**
+ *  ONLY CHANGE THIS VARIABLE IF YOU KNOW WHAT YOU ARE DOING. READ BELOW.
+ *  
+ *  The RELATIVE filepath to this app's base directory on the server from where this file is located.
+ *  Note that this should NOT need to get changed!
+ *  The only conceivable reason you might want to change this is if you aren't using composer or the demo
+ *  project to install Cora, and instead are placing the Cora system files in some custom place.
+ */
+$config['basedir'] = dirname(__FILE__).'/../../../../../';
 
 /**
  *  Path to models/classes directory relative to this file.
  */
-$config['pathToModels'] = dirname(__FILE__).'/../../../classes/';
+$config['pathToModels'] = $config['basedir'].'classes/';
 
 /**
  *  Path to views directory relative to this file.
  */
-$config['pathToViews'] = dirname(__FILE__).'/../../../views/';
+$config['pathToViews'] = $config['basedir'].'views/';
 
 /**
  *  Path to controllers directory relative to this file.
  */
-$config['pathToControllers'] = dirname(__FILE__).'/../../../controllers/';
+$config['pathToControllers'] = $config['basedir'].'controllers/';
 
 /**
  *  Path to libraries directory relative to this file.
  */
-$config['pathToLibraries'] = dirname(__FILE__).'/../../../libraries/';
+$config['pathToLibraries'] = $config['basedir'].'libraries/';
 
 /**
- *  Path to Extensions directory relative to this file.
+ *  Path to App's Cora directory relative to this file.
  */
-$config['pathToExtensions'] = dirname(__FILE__).'/../../extensions/';
+$config['pathToCora'] = $config['basedir'].'cora/';
 
 
 /**
