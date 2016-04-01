@@ -167,14 +167,15 @@ class Route extends Framework
         // Grab method arguments from the URL.
         $methodArgs = $this->partialPathArray($this->controllerOffset+2);
         
-        // Push empty string if no arguments are set.
-        if (empty($methodArgs)) {
-            array_push($methodArgs, '');
+        // If no arguments are set then make empty array.
+        if (empty($methodArgs) || $methodArgs[0] == '') {
+            $methodArgs = array();
         }
-        
-        // Sanitize arguments.
-        $input = new Input($methodArgs);
-        $methodArgs = $input->getData();
+        else {
+            // Sanitize arguments.
+            $input = new Input($methodArgs);
+            $methodArgs = $input->getData();
+        }
 
         /** Maps an array of arguments derived from the URL into a method with a comma
          *  delimited list of parameters. Calls the method.
