@@ -174,6 +174,11 @@ class Route extends Framework
             $methodArgs = $this->partialPathArray($this->controllerOffset+2);
         }
         
+        // Remove the last item from arguments if empty.
+        if ($methodArgs[count($methodArgs)-1] == '') {
+            array_pop($methodArgs);
+        }
+        
         // If no arguments are set then make empty array.
         if (empty($methodArgs) || $methodArgs[0] == '') {
             $methodArgs = array();
