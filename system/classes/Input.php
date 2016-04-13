@@ -116,10 +116,18 @@ class Input
         return array_values($FileArray);
     }
 
-    public function hasFiles()
+    public function hasFiles($field = null)
     {
-        if ($this->filesData && count($this->filesData)) {
-            return true;
+        if ($field) {;
+            if (count($this->files($field))) {
+                return true;
+            }
+            return false;
+        }
+        foreach ($this->filesData as $files) {
+            if ($files && count($this->filesData)) {
+                return true;
+            }
         }
         return false;
     }
