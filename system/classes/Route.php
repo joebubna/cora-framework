@@ -13,8 +13,6 @@ class Route extends Framework
     protected $controllerNamespace; // STRING
     protected $controller;          // OBJECT
     protected $method;              // STRING
-    protected $collectionIDgiven;   // BOOL     - If the URL is of form /articles/107 this is set to true.
-    protected $collectionID;        // INT      - The ID if a collection ID is specified.
     
     
     public function __construct($container = false)
@@ -68,7 +66,7 @@ class Route extends Framework
      *
      *  NOTE: This is a recursive function.
      */
-     public function routeFind($basePath = '', $offset = 0)
+    public function routeFind($basePath = '', $offset = 0)
     {
         $this->debug('');
         
@@ -165,28 +163,16 @@ class Route extends Framework
         }
 
         // Grab method arguments from the URL.
-        if ($this->collectionIDGiven) {
-            $methodArgs = $this->partialPathArray($this->controllerOffset+1, 1);
-        }
-        else {
-            $methodArgs = $this->partialPathArray($this->controllerOffset+2);
+        $methodArgs = $this->partialPathArray($this->controllerOffset+2);
+        
+        // Push empty string if no arguments are set.
+        if (empty($methodArgs)) {
+            array_push($methodArgs, '');
         }
         
-        // Remove the last item from arguments if empty.
-        $lastItem = count($methodArgs)-1;
-        if (isset($methodArgs[$lastItem]) && $methodArgs[$lastItem] == '') {
-            array_pop($methodArgs);
-        }
-        
-        // If no arguments are set then make empty array.
-        if (empty($methodArgs) || $methodArgs[0] == '') {
-            $methodArgs = array();
-        }
-        else {
-            // Sanitize arguments.
-            $input = new Input($methodArgs);
-            $methodArgs = $input->getData();
-        }
+        // Sanitize arguments.
+        $input = new Input($methodArgs);
+        $methodArgs = $input->getData();
 
         /** Maps an array of arguments derived from the URL into a method with a comma
          *  delimited list of parameters. Calls the method.
@@ -226,7 +212,7 @@ class Route extends Framework
     {
         
         // Load generic Cora parent class
-        require_once('Cora.php');    
+        require_once('Cora.php');
         
         // If the config specifies an application specific class that extends Cora, load that.
         if ($this->config['cora_extension'] != '') {
@@ -240,13 +226,12 @@ class Route extends Framework
                     $this->controllerName .
                     $this->config['controllersPostfix'] .
                     '.php';
-        
-        if (file_exists($cPath)) {
-            include_once($cPath);
-        }
+
+        require_once($cPath);
+
         // Return an instance of the controller.
-        $class = $this->controllerNamespace.$this->getClassName($this->controllerName);
-        
+        $class = $this->controllerNamespace.$this->controllerName;
+
         return new $class($this->container);
     }
     
@@ -255,23 +240,12 @@ class Route extends Framework
     {
         
         $method = '';
-        $this->collectionIDGiven = false;
-        $this->collectionID = false;
         
         // Figure out method to be called, or use default.
         if (isset($this->path[$this->controllerOffset+1])) {
             $method = $this->path[$this->controllerOffset+1];
-            
-            // If no method is specified or if the method spot is numeric (indicating 
-            // that an ID is being passed to a collection for RESTful routing)
-            // Route to default method.
             if ($method == '') {
                 $method = $this->config['default_method'];
-            }
-            else if (is_numeric($method)) {
-                $this->collectionIDGiven = true;
-                $this->collectionID = $method;
-                $method = $this->config['default_method'];          
             }
         }
         else {
@@ -284,41 +258,22 @@ class Route extends Framework
 
             $httpMethod = $_SERVER['REQUEST_METHOD'];
             
-            if ($this->collectionIDGiven) {
-                switch ($httpMethod) {
-                    case 'GET':
-                        $method = 'itemGET';
-                        break;
-                    case 'PUT':
-                        $method = 'itemPUT';
-                        break;
-                    case 'POST':
-                        $method = 'itemPOST';
-                        break;
-                    case 'DELETE':
-                        $method = 'itemDELETE';
-                        break;
-                }
-            }
-            else {
-                switch ($httpMethod) {
-                    case 'PUT':
-                        $method = $method.'PUT';
-                        break;
-                    case 'POST':
-                        $method = $method.'POST';
-                        break;
-                    case 'DELETE':
-                        $method = $method.'DELETE';
-                        break;
-                }
+            switch ($httpMethod) {
+                case 'PUT':
+                    $method = $method.'PUT';
+                    break;
+                case 'POST':
+                    $method = $method.'POST';
+                    break;
+                case 'DELETE':
+                    $method = $method.'DELETE';
+                    break;
             }
         }
         
         return $method;
         
     } // END getMethod
-    
 
     protected function getClassName($slug)
     {
@@ -345,7 +300,7 @@ class Route extends Framework
     protected function error404()
     {
         
-        require_once('Cora.php');    
+        require_once('Cora.php');
         require('CoraError.php');
         $error = new \CoraError($this->container);
         $error->index();
@@ -361,7 +316,7 @@ class Route extends Framework
                     $this->config['modelsPostfix'] .
                     '.php';
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
-        if (file_exists($fullPath)) {
+        if(file_exists($fullPath)) {
             include($fullPath);
         }
     }
