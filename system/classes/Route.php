@@ -242,9 +242,10 @@ class Route extends Framework
                     $this->controllerName .
                     $this->config['controllersPostfix'] .
                     '.php';
-
-        require_once($cPath);
         
+        if (file_exists($cPath)) {
+            include_once($cPath);
+        }
         // Return an instance of the controller.
         $class = $this->controllerNamespace.$this->getClassName($this->controllerName);
         
@@ -362,6 +363,8 @@ class Route extends Framework
                     $this->config['modelsPostfix'] .
                     '.php';
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
-        include($fullPath);
+        if (file_exists($fullPath)) {
+            include($fullPath);
+        }
     }
 } // end Class
