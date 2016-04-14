@@ -53,6 +53,11 @@ class Route extends Framework
         // Resulting pathString will be 'controller/method/id/'
         $this->pathString = explode($this->config['site_url'], $cleanURI, 2)[1];
         
+        // If config option to make url lowercase is true
+        if ($this->config['lowercase_url']) {
+            $this->pathString = strtolower($this->pathString);
+        }
+        
         // Setup Path array
         $this->path = explode('/', $this->pathString);
     }
