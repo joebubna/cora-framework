@@ -4,6 +4,7 @@
  */
 $config['debug'] = false;
 $config['debugHide'] = false; // Hides debug info in HTML comments so you have to view source to see it.
+$config['mode'] = 'development';
 
 /**
  *  If site URL is www.MySite.com
@@ -34,7 +35,7 @@ $config['lowercase_url'] = true;
  *  a <name>.php file to the Cora\Extensions directory that is
  *  a class that extends Cora. Then enter <name> below.
  */
-$config['cora_extension'] = 'MyApp';
+//$config['cora_extension'] = 'MyApp';
 
 /**
  *  Default Controller to try and load if one's not specified.
