@@ -162,8 +162,11 @@ class Database
     
     public function insert($columns)
     {
-        //$this->store('keyValue', 'inserts', $data);
-        $this->storeValue('inserts', $columns);
+        $val = $columns;
+        if (!is_array($val)) {
+            $val = explode(',', $val);
+        }
+        $this->storeValue('inserts', $val);
         return $this;
     }
     
