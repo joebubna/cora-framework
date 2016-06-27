@@ -270,13 +270,13 @@ class Database
     }
     
     
-    protected function store($type, $dataMember, $fields, $value = false, $comparison = '=', $conjunction = 'AND')
+    protected function store($type, $dataMember, $fields, $value = null, $comparison = '=', $conjunction = 'AND')
     {
         
         // If the data being stored DOES need its key.
         // E.g. adding WHERE field = value pairs to wheres array.
         if ($type == 'keyValue') {
-            if ($value) {
+            if ($value !== null) {
                 $key = $fields;
                 $this->storeKeyValue($dataMember, $value, $key, $comparison);
             }
@@ -287,7 +287,7 @@ class Database
         
         // If the data being stored is condition statements (WHERE, HAVING)
         else if($type == 'condition') {
-            if ($value) {
+            if ($value !== null) {
                 $key = $fields;
                 $this->storeCondition($dataMember, $value, $key, $comparison, $conjunction);
             }
