@@ -3,6 +3,8 @@ namespace Cora;
 
 class Database
 {
+    public static $defaultDb;
+    
     protected $tables;
     protected $selects;
     protected $updates;
@@ -27,6 +29,14 @@ class Database
     public function __construct()
     {
         $this->reset();
+    }
+    
+    
+    public function isSelectSet()
+    {
+        if(empty($this->selects))
+            return false;
+        return true;
     }
     
     
@@ -381,6 +391,20 @@ class Database
     }
     
     
+    // Just a convenience method to invoke a result method without having to call exec() first.
+    public function fetch()
+    {
+        return $this->exec()->fetch();
+    }
+    
+    
+    // Just a convenience method to invoke a result method without having to call exec() first.
+    public function fetchAll()
+    {
+        return $this->exec()->fetchAll();
+    }
+    
+    
     public function exec()
     {
         // To be implemented by specific DB adaptor.
@@ -392,6 +416,37 @@ class Database
     {
         // To be implemented by specific DB adaptor.
         throw new Exception('getQuery() calls calculate(), which needs to be implemented by a specific database adaptor!');
+    }
+    
+    
+    public static function getDefaultDb($getFresh = false)
+    {
+        // Check if default DB instance is already created.
+        if (isset(self::$defaultDb) && $getFresh == false) {
+            return self::$defaultDb;
+        }
+        
+        // Load Cora DB settings
+        require(dirname(__FILE__).'/../config/config.php');
+        require(dirname(__FILE__).'/../config/database.php');
+
+        // Load app specific DB settings
+        if (file_exists($config['basedir'].'cora/config/database.php')) {
+            include($config['basedir'].'cora/config/database.php');
+        }
+        
+        if ($getFresh) {
+            // Return a brand new default adaptor.
+            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['defaultConnection'];
+            return new $dbAdaptor();
+        }
+        else {
+            // Use Default Adaptor as defined in the settings.
+            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['defaultConnection'];
+            self::$defaultDb = new $dbAdaptor();
+
+            return self::$defaultDb;
+        }
     }
     
 }
