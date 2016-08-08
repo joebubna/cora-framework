@@ -126,6 +126,8 @@ class Gateway
     
 	protected function _update($model, $table, $id_name)
 	{
+        $model->beforeSave(); // Lifecycle callback
+        
         $this->db   ->update($table)
                     ->where($id_name, $model->{$id_name});
         
@@ -284,15 +286,19 @@ class Gateway
             }
         }
         
+        $model->afterSave(); // Lifecycle callback
         return $this->db->exec()->lastInsertId();    
 	}
 
     protected function _create($model, $table, $id_name)
 	{
+        $model->beforeSave(); // Lifecycle callback
+        
         $columns = array();
         $values = array();
         
         $this->db->into($table);
+        
         
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // FIRST PASS 
@@ -346,6 +352,7 @@ class Gateway
         }
         $this->db->insert($columns);
         $this->db->values($values);
+        //echo $this->db->getQuery()."<br>";
         $modelId = $this->db->exec()->lastInsertId();
         
         // Assign the database ID to the model.
@@ -400,10 +407,10 @@ class Gateway
                             ->exec();       
                     }
                     else {
-                        // The reference must be stored in the parent's table.
-                        // So add it to our insert.
-                        $columns[]  = $key;
-                        $values[]   = $id;
+                        $this->db   ->update($table)
+                                    ->set($key, $id)
+                                    ->where($model->getPrimaryKey(), $model->{$model->getPrimaryKey()});
+                        $this->db->exec();
                     }
                     
                 } 
@@ -491,6 +498,7 @@ class Gateway
             }
         }
         
+        $model->afterSave(); // Lifecycle callback
         // Return the ID of the created record in the db.
         return $modelId;
 	}

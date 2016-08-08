@@ -412,6 +412,13 @@ class Database
     }
     
     
+    public function emptyDatabase()
+    {
+        // to be implemented by specific adaptor.
+        throw new Exception('emptyDatabase() needs to be implemented by a specific database adaptor!');
+    }
+    
+    
     protected function calculate()
     {
         // To be implemented by specific DB adaptor.
@@ -437,16 +444,33 @@ class Database
         
         if ($getFresh) {
             // Return a brand new default adaptor.
-            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['defaultConnection'];
+            $defaultConn = $dbConfig['defaultConnection'];
+            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['connections'][$defaultConn]['adaptor'];
             return new $dbAdaptor();
         }
         else {
             // Use Default Adaptor as defined in the settings.
-            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['defaultConnection'];
+            $defaultConn = $dbConfig['defaultConnection'];
+            $dbAdaptor = '\\Cora\\Db_'.$dbConfig['connections'][$defaultConn]['adaptor'];
             self::$defaultDb = new $dbAdaptor();
 
             return self::$defaultDb;
         }
+    }
+    
+    public static function getDb($connection)
+    {
+        // Load Cora DB settings
+        require(dirname(__FILE__).'/../config/config.php');
+        require(dirname(__FILE__).'/../config/database.php');
+
+        // Load app specific DB settings
+        if (file_exists($config['basedir'].'cora/config/database.php')) {
+            include($config['basedir'].'cora/config/database.php');
+        }
+        
+        $dbAdaptor = '\\Cora\\Db_'.$dbConfig['connections'][$connection]['adaptor'];
+        return new $dbAdaptor($connection);
     }
     
 }
