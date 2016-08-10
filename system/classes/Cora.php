@@ -24,7 +24,7 @@ class Cora {
         $this->data->$property = $value;
     }
     
-    public function _loadView($method, $data = false)
+    protected function _loadView($method, $data = false)
     {
         if ($data == false) {
             $data = $this->data;
