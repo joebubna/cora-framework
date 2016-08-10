@@ -254,10 +254,14 @@ class Model
     /**
      *  For getting model data without triggering dynamic data fetching.
      */
-    public function getAttributeValue($name)
+    public function getAttributeValue($name, $convertDates = true)
     {
         if (isset($this->model_data[$name])) {
-            return $this->model_data[$name];
+            $result = $this->model_data[$name];
+            if ($result instanceof \DateTime && $convertDates == true) {
+                $result = $result->format('Y-m-d H:i:s');
+            }
+            return $result;
         }
         return null;
     }
@@ -488,16 +492,28 @@ class Model
     }
     
     
+    public function save()
+    {
+        $repo = $this->getRepository();
+        $repo->save($this);
+    }
+    
+    
     public function delete()
     {
         return true;
     }
     
     
-    public function save()
+    public function beforeCreate()
     {
-        $repo = $this->getRepository();
-        $repo->save($this);
+        //echo __FUNCTION__;
+    }
+    
+    
+    public function afterCreate()
+    {
+        //echo __FUNCTION__;
     }
     
     

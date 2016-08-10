@@ -292,6 +292,7 @@ class Gateway
 
     protected function _create($model, $table, $id_name)
 	{
+        $model->beforeCreate(); // Lifecycle callback
         $model->beforeSave(); // Lifecycle callback
         
         $columns = array();
@@ -498,6 +499,7 @@ class Gateway
             }
         }
         
+        $model->afterCreate(); // Lifecycle callback
         $model->afterSave(); // Lifecycle callback
         // Return the ID of the created record in the db.
         return $modelId;
