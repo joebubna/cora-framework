@@ -7,6 +7,12 @@ $config['debugHide'] = false; // Hides debug info in HTML comments so you have t
 $config['mode'] = 'development';
 
 /**
+ *  This is your base URL.
+ *  I.E. www.MySite.com
+ */
+$config['base_url'] = 'localhost';
+
+/**
  *  If site URL is www.MySite.com
  *  set this to '/'
  *  If site URL is www.MySite.com/app/
@@ -20,7 +26,7 @@ $config['mode'] = 'development';
  *  If site_url is set to '/app/' then the uppercase part of the url above will be ignored
  *  by the router.
  */
-$config['site_url'] = '/cora/';
+$config['site_url'] = '/tts/';
 
 /**
  *  Should URLs be converted to lowercase?
@@ -29,6 +35,23 @@ $config['site_url'] = '/cora/';
  *  can be useful. If however you want your URLs to be case sensitive, then turn this off.
  */
 $config['lowercase_url'] = true;
+
+
+/**
+ *  Email settings. Need to set these if you want to send emails using Cora's Mailer class.
+ */
+$config['smtp_host'] = '';
+$config['smtp_port'] = 587;
+$config['smtp_secure'] = 'tls';
+$config['smtp_auth'] = 'true';
+$config['smtp_username'] = '';
+$config['smtp_password'] = '';
+
+/**
+ *  When in development mode, emails send using Cora's Mailer class will get sent
+ *  to the admin email setup using the following:
+ */
+$config['admin_email'] = '';
 
 /**
  *  If you want to extend the base Cora controller class, add
