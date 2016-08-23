@@ -62,7 +62,6 @@ class Mailer extends Framework
     {
         if ($this->config['mode'] == 'development') {
             $recipients = $this->message->getAllRecipientAddresses();
-            var_dump($recipients);
             $subject = $this->message->Subject;
             $subject .= ' TO: ';
             foreach ($recipients as $key => $value) {
