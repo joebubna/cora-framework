@@ -130,7 +130,7 @@ class Load extends Framework
 
 
         // Determine full filepath to View
-        // $filePath = $fullPath . $fileName;
+        //$filePath = $fullPath . $fileName;
 
         $filePath = $this->_getFilePath($pathname, $fileName);
 

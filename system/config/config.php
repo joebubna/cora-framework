@@ -116,7 +116,14 @@ $config['basedir'] = realpath(dirname(__FILE__).'/../../../../../').'/';
  *  The model namespace is used by the RepositoryFactory class to save you
  *  having to type in 'models/user' to create a user repository.
  */
-$config['modelNamespace'] = '\\Models\\';
+if (!defined('CORA_MODEL_NAMESPACE')) {
+    define('CORA_MODEL_NAMESPACE', '\\Models\\');
+}
+
+/**
+ *  Path to models directory relative to this file. Used by Database Builder.
+ */
+$config['pathToModels'] = $config['basedir'].'models/';
 
 /**
  *  Path to views directory relative to this file.

@@ -73,7 +73,7 @@ class DatabaseBuilder extends Framework
                 echo "//////////////////////\n";
                 
                 // Only build a table for this model if extends Cora's Model class.
-                if (is_subclass_of($model, '\Cora\Model')) {
+                if (is_subclass_of($model, '\\Cora\\Model')) {
                     $object = new $model();
                     
                     $db         = $object->getDbAdaptor();
@@ -158,7 +158,7 @@ class DatabaseBuilder extends Framework
                     $db->exec();
                 }
                 else {
-                    echo 'NOTICE: '.$model." is not a Cora Model. Ignoring for DB creation.\n";
+                    echo 'NOTICE: '.$model." is not a Cora Model. Ignoring for DB creation.\n\n";
                 }
             }
         }
@@ -187,7 +187,7 @@ class DatabaseBuilder extends Framework
         ////////////////////////////////////////////
         // If file path is /task/class.note.inc.php
         ////////////////////////////////////////////
-        
+
         // Get 'class.note.inc.php'
         $nameFull = $this->getName($filepath);
         
@@ -199,7 +199,7 @@ class DatabaseBuilder extends Framework
         $className = $this->getClassName($nameFull);
         
         // Get '\task\note'
-        $fullClassName = '\\'.$this->getClassPath($path).$className;
+        $fullClassName = CORA_MODEL_NAMESPACE.$this->getClassPath($path).$className;
 
         return $fullClassName;
     }

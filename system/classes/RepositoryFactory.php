@@ -15,7 +15,7 @@ class RepositoryFactory
         include($config['basedir'].'cora/config/config.php');
         
         // Create an instance of the class desired for this repo.
-        $className = $config['modelNamespace'].ucfirst($class);
+        $className = CORA_MODEL_NAMESPACE.ucfirst($class);
         $classObj = new $className();
         
         // ---------------------------------------------------------------------------------

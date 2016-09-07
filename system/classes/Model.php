@@ -325,7 +325,13 @@ class Model
     
     public function fetchRelatedObj($objFullName)
     {
-        $objType = '\\'.$objFullName;
+        // Load and set cora config.
+        require(dirname(__FILE__).'/../config/config.php');
+        
+        // Load custom app config
+        include($config['basedir'].'cora/config/config.php');
+        
+        $objType = CORA_MODEL_NAMESPACE.$objFullName;
         return new $objType();
     }
     
