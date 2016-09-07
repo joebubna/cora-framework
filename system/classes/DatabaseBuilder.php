@@ -11,6 +11,8 @@ class DatabaseBuilder extends Framework
         spl_autoload_register(array($this, 'autoLoader'));
         spl_autoload_register(array($this, 'coraExtensionLoader'));
         spl_autoload_register(array($this, 'libraryLoader'));
+        spl_autoload_register(array($this, 'listenerLoader'));
+        spl_autoload_register(array($this, 'eventLoader'));
         spl_autoload_register(array($this, 'coraLoader'));
         
         $this->modelPath = realpath($this->config['pathToModels']);
@@ -18,26 +20,36 @@ class DatabaseBuilder extends Framework
     
     public function dbEmpty($connection)
     {
-        $db = \Cora\Database::getDb($connection);
-        $db->emptyDatabase();
+        if ($this->config['mode'] == 'development') {
+            $db = \Cora\Database::getDb($connection);
+            $db->emptyDatabase();
+        }
+        else {
+            echo 'Database manipulation is turned off for projects not in "development" mode. If you want to use the Database Builder on this project, edit the config "mode" setting and change it to "development"';
+        }
     }
     
     public function dbBuild($data)
     {
-        // Call recursive processing of models to build DB.
-        $this->examine('');
-        
-        // If no datafile name was passed in, set default.
-        if ($data == '') {
-            $data = 'data.php';
+        if ($this->config['mode'] == 'development') {
+            // Call recursive processing of models to build DB.
+            $this->examine('');
+
+            // If no datafile name was passed in, set default.
+            if ($data == '') {
+                $data = 'data.php';
+            }
+
+            // Determine path
+            $path = $this->config['basedir'].'includes/'.$data;
+
+            // If a data PHP file to include exists, include it.
+            if (file_exists($path)) {
+                include($path);
+            }
         }
-        
-        // Determine path
-        $path = $this->config['basedir'].'includes/'.$data;
-        
-        // If a data PHP file to include exists, include it.
-        if (file_exists($path)) {
-            include($path);
+        else {
+            echo 'Database manipulation is turned off for projects not in "development" mode. If you want to use the Database Builder on this project, edit the config "mode" setting and change it to "development"';
         }
     }
     
@@ -233,9 +245,13 @@ class DatabaseBuilder extends Framework
     // In the future get rid of this duplication.
     ////////////////////////////////////////////////
     
+    /************************************************
+     *  PSR-4 Autoloaders.
+     ***********************************************/
+    
     protected function autoLoader($className)
-    {
-        $fullPath = $this->config['pathToModels'] .
+    {   
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->config['modelsPrefix'] .
                     $this->getNameBackslash($className) .
@@ -243,24 +259,14 @@ class DatabaseBuilder extends Framework
                     '.php';
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
         
-        // Grab root of namespace.
-        $rootName = explode('\\', $className)[0];
-        
-        // Depending on the root of the namespace, possibly run one of several autoloaders.
-        if ($rootName == 'Event') {
-            $this->eventLoader($className);
-        }
-        else if ($rootName == 'Listener') {
-            $this->listenerLoader($className);
-        }
-        else if (file_exists($fullPath)) {
+        if (file_exists($fullPath)) {
             include($fullPath);
         }
     }
     
     protected function eventLoader($className)
     {
-        $fullPath = $this->config['pathToEvents'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className, true) .
                     $this->config['eventsPrefix'] .
                     $this->getNameBackslash($className) .
@@ -274,7 +280,7 @@ class DatabaseBuilder extends Framework
     
     protected function listenerLoader($className)
     {
-        $fullPath = $this->config['pathToListeners'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className, true) .
                     $this->config['listenerPrefix'] .
                     $this->getNameBackslash($className) .
@@ -300,8 +306,7 @@ class DatabaseBuilder extends Framework
     
     protected function coraExtensionLoader($className)
     {
-        $fullPath = $this->config['pathToCora'] .
-                    'extensions/' .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->getNameBackslash($className) .
                     '.php';
@@ -311,11 +316,11 @@ class DatabaseBuilder extends Framework
         }
     }
     
-    protected function libraryLoader($className)
+     protected function libraryLoader($className)
     {
         //$name = $this->getName($className);
         //$path = $this->getPath($className);
-        $fullPath = $this->config['pathToLibraries'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->config['librariesPrefix'] .
                     $this->getNameBackslash($className) .
@@ -323,7 +328,8 @@ class DatabaseBuilder extends Framework
                     '.php';
         
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
-        // If the file exists in the Libraries directory, load it.
+        
+         // If the file exists in the Libraries directory, load it.
         if (file_exists($fullPath)) {
             include_once($fullPath);
         }

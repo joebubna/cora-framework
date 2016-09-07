@@ -6,8 +6,8 @@ class Container
     protected $signature;
     protected $singleton;
     
-    public function __construct()
-    {
+    public function __construct($config = false)
+    {   
         // Stores closures for creating a resource object.
         $this->signature = new \stdClass();
         
@@ -22,7 +22,7 @@ class Container
      */
     public function __get($name)
     {
-        return $this->make($name);
+        return $this->make($name)($this);
     }
     
     

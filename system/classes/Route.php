@@ -21,14 +21,14 @@ class Route extends Framework
     {
         parent::__construct(); // Call parent constructor too so we don't lose functionality.
         
-        // Register a autoloader function. Is called when an unloaded class is invoked.
+        // Register autoloader functions. Are called when an unloaded class is invoked.
+        // These should only end up getting called if Composer doesn't work first.
         spl_autoload_register(array($this, 'autoLoader'));
         spl_autoload_register(array($this, 'coraExtensionLoader'));
         spl_autoload_register(array($this, 'libraryLoader'));
+        spl_autoload_register(array($this, 'listenerLoader'));
+        spl_autoload_register(array($this, 'eventLoader'));
         spl_autoload_register(array($this, 'coraLoader'));
-        //spl_autoload_register(array($this, 'eventLoader'));
-        //spl_autoload_register(array($this, 'listenerLoader'));
-        
         
         // For site specific data. This will be passed to Cora's controllers when they
         // are invoked in the routeExec() method.
@@ -39,6 +39,9 @@ class Route extends Framework
         
         // Debug
         $this->debug('Route: ' . $this->pathString);
+        
+        // Namespacing Defaults
+        $this->controllerNamespace = 'Controllers\\';
 
     }
     
@@ -237,12 +240,7 @@ class Route extends Framework
     {
         
         // Load generic Cora parent class
-        require_once('Cora.php');    
-        
-        // If the config specifies an application specific class that extends Cora, load that.
-        //if ($this->config['cora_extension'] != '') {
-            //require_once($this->config['pathToCora'].'extensions/'.$this->config['cora_extension'].'.php');
-        //}
+        require_once('Cora.php');
         
         // Include the controller code.
         $cPath =    $this->config['pathToControllers'] .
@@ -366,9 +364,21 @@ class Route extends Framework
         
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    /************************************************
+     *  PSR-4 Autoloaders.
+     ***********************************************/
+    
     protected function autoLoader($className)
-    {
-        $fullPath = $this->config['pathToModels'] .
+    {   
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->config['modelsPrefix'] .
                     $this->getNameBackslash($className) .
@@ -376,24 +386,14 @@ class Route extends Framework
                     '.php';
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
         
-        // Grab root of namespace.
-        $rootName = explode('\\', $className)[0];
-        
-        // Depending on the root of the namespace, possibly run one of several autoloaders.
-        if ($rootName == 'Event') {
-            $this->eventLoader($className);
-        }
-        else if ($rootName == 'Listener') {
-            $this->listenerLoader($className);
-        }
-        else if (file_exists($fullPath)) {
+        if (file_exists($fullPath)) {
             include($fullPath);
         }
     }
     
     protected function eventLoader($className)
     {
-        $fullPath = $this->config['pathToEvents'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className, true) .
                     $this->config['eventsPrefix'] .
                     $this->getNameBackslash($className) .
@@ -407,7 +407,7 @@ class Route extends Framework
     
     protected function listenerLoader($className)
     {
-        $fullPath = $this->config['pathToListeners'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className, true) .
                     $this->config['listenerPrefix'] .
                     $this->getNameBackslash($className) .
@@ -433,8 +433,7 @@ class Route extends Framework
     
     protected function coraExtensionLoader($className)
     {
-        $fullPath = $this->config['pathToCora'] .
-                    'extensions/' .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->getNameBackslash($className) .
                     '.php';
@@ -444,11 +443,11 @@ class Route extends Framework
         }
     }
     
-    protected function libraryLoader($className)
+     protected function libraryLoader($className)
     {
         //$name = $this->getName($className);
         //$path = $this->getPath($className);
-        $fullPath = $this->config['pathToLibraries'] .
+        $fullPath = $this->config['basedir'] .
                     $this->getPathBackslash($className) .
                     $this->config['librariesPrefix'] .
                     $this->getNameBackslash($className) .
@@ -456,9 +455,11 @@ class Route extends Framework
                     '.php';
         
         //echo 'Trying to load ', $className, '<br> &nbsp;&nbsp;&nbsp; from file ', $fullPath, "<br> &nbsp;&nbsp;&nbsp; via ", __METHOD__, "<br>";
-        // If the file exists in the Libraries directory, load it.
+        
+         // If the file exists in the Libraries directory, load it.
         if (file_exists($fullPath)) {
             include_once($fullPath);
         }
     }
+    
 } // end Class

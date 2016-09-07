@@ -26,7 +26,7 @@ $config['base_url'] = 'localhost';
  *  If site_url is set to '/app/' then the uppercase part of the url above will be ignored
  *  by the router.
  */
-$config['site_url'] = '/tts/';
+$config['site_url'] = '/cora/';
 
 /**
  *  Should URLs be converted to lowercase?
@@ -48,17 +48,33 @@ $config['smtp_username'] = '';
 $config['smtp_password'] = '';
 
 /**
- *  When in development mode, emails send using Cora's Mailer class will get sent
- *  to the admin email setup using the following:
- */
-$config['admin_email'] = '';
-
-/**
  *  If you want to extend the base Cora controller class, add
  *  a <name>.php file to the Cora\Extensions directory that is
  *  a class that extends Cora. Then enter <name> below.
  */
 //$config['cora_extension'] = 'MyApp';
+
+/**
+ *  On by default, this causes Cora to use full PSR-4 namespacing rules such that all classes
+ *  have a namespace. This prevents almost all namespace conflicts. This means all your controllers
+ *  will be in a "Controller" namespace, all your models in a "Model" namespace, etc.
+ *
+ *  Optionally, you can turn this off. Doing so will allow you to keep your classes un-namespaced
+ *  (so long as they aren't in a subfolder), but you will be unable to have classes with the name
+ *  name. For instance, you wouldn't be able to have a "User" controller and a "User" model. Instead,
+ *  you would have to have a "Users" (plural) controller and a "User" model. The benefit to having
+ *  this off is mostly if you are working on integrating Cora with a legacy project that didn't use
+ *  namespaces much. Additionally, having this off can declutter your code by making your class
+ *  instantiations shorter and ridding you of a ton of "use" statements at the top of your code.
+ *  Just make sure you understand the consequences before disabling this.
+ *  
+ *  HISTORY:
+ *  When Cora was first conceived, its purpose was to integrate with an existing legacy project.
+ *  In order to do that, controllers and models were left un-namespaced so long as they weren't
+ *  in a subfolder. Support for this limited namespacing mode is now turned off by default, but
+ *  can optionally be turned on if you want it.
+ */
+$config['psr4_namespaces'] = TRUE;
 
 /**
  *  Default Controller to try and load if one's not specified.
@@ -89,13 +105,18 @@ $config['enable_RESTful'] = true;
  *  Note that this should NOT need to get changed!
  *  The only conceivable reason you might want to change this is if you aren't using composer or the demo
  *  project to install Cora, and instead are placing the Cora system files in some custom place.
+ *
+ *  This takes the location of this file which is normally at:
+ *  /project_root/vendor/cora/cora-framework/system/config/config.php
+ *  and backtracks through the filesystem to the project_root, saving a ref to it.
  */
 $config['basedir'] = realpath(dirname(__FILE__).'/../../../../../').'/';
 
 /**
- *  Path to models directory relative to this file.
+ *  The model namespace is used by the RepositoryFactory class to save you
+ *  having to type in 'models/user' to create a user repository.
  */
-$config['pathToModels'] = $config['basedir'].'models/';
+$config['modelNamespace'] = '\\Models\\';
 
 /**
  *  Path to views directory relative to this file.
@@ -106,27 +127,6 @@ $config['pathToViews'] = $config['basedir'].'views/';
  *  Path to controllers directory relative to this file.
  */
 $config['pathToControllers'] = $config['basedir'].'controllers/';
-
-/**
- *  Path to libraries directory relative to this file.
- */
-$config['pathToLibraries'] = $config['basedir'].'libraries/';
-
-/**
- *  Path to events directory relative to this file.
- */
-$config['pathToEvents'] = $config['basedir'].'events/';
-
-/**
- *  Path to listeners directory relative to this file.
- */
-$config['pathToListeners'] = $config['basedir'].'listeners/';
-
-/**
- *  Path to App's Cora directory relative to this file.
- */
-$config['pathToCora'] = $config['basedir'].'cora/';
-
 
 /**
  *  Model/Class file prefix. I.e. If your class files are named "class.MyClass.inc.php"
@@ -150,7 +150,7 @@ $config['controllersPostfix'] = '';
 /**
  *  Library file prefix / postfix.
  */
-$config['librariesPrefix'] = '';
+$config['librariesPrefix'] = 'lib.';
 $config['librariesPostfix'] = '';
 
 /**

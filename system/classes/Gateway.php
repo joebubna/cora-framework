@@ -8,6 +8,7 @@ class Gateway
 	protected $db;
     protected $tableName;
     protected $idName;
+    protected $idFallback;
 
 	public function __construct(Database $db, $tableName, $id)
 	{

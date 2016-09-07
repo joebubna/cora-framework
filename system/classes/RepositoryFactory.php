@@ -8,8 +8,14 @@ class RepositoryFactory
 
     public static function make($class, $idField = false, $table = false, $freshAdaptor = false, $db = false)
     {      
+        // Load and set cora config.
+        require(dirname(__FILE__).'/../config/config.php');
+        
+        // Load custom app config
+        include($config['basedir'].'cora/config/config.php');
+        
         // Create an instance of the class desired for this repo.
-        $className = '\\'.$class;
+        $className = $config['modelNamespace'].ucfirst($class);
         $classObj = new $className();
         
         // ---------------------------------------------------------------------------------
@@ -34,6 +40,11 @@ class RepositoryFactory
         }
         else {
             $factory = new Factory($class, $db);
+        }
+        
+        // If no specific ID field was passed in, then grab from model.
+        if ($idField == false) {
+            $idField = $classObj->getPrimaryKey();
         }
         
         // Creates the Gateway the repository will use.

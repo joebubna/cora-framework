@@ -406,6 +406,10 @@ class Model
         // Uses the class name to determine table name if one isn't given.
         // If value of $class is 'WorkOrder\\Note' then $tableName will be 'work_order_notes'.
         $namespaces = explode('\\', $classNamespace);
+        
+        // Remove type of class from namespace (i.e. remove 'models')
+        array_shift($namespaces);
+        
         $tableName = '';
         $length = count($namespaces);
         for ($i = 0; $i < $length; $i++) {
