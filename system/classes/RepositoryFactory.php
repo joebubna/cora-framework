@@ -14,8 +14,21 @@ class RepositoryFactory
         // Load custom app config
         include($config['basedir'].'cora/config/config.php');
         
+        // ---------------------------------------------------------------------------------
         // Create an instance of the class desired for this repo.
-        $className = CORA_MODEL_NAMESPACE.ucfirst($class);
+        // ---------------------------------------------------------------------------------
+        
+        // If the class is specified like '/Models/User' then do nothing special.
+        if ($class[0] == '\\') {
+            $className = $class;
+        }
+        
+        // If the class is specified like 'User', then prepend the model namespace to it.
+        else {
+            $className = CORA_MODEL_NAMESPACE.ucfirst($class);
+        }
+        
+        //echo $className.'<br>';
         $classObj = new $className();
         
         // ---------------------------------------------------------------------------------
@@ -49,7 +62,8 @@ class RepositoryFactory
         
         // Creates the Gateway the repository will use.
         $gateway = new Gateway($db, $tableName, $idField);
-
+        
+        //echo print_r($GLOBALS['savedModelsList']);
         return new Repository($gateway, $factory);
     }
 }

@@ -1,45 +1,45 @@
 <?php
 namespace Cora;
 
-class Session
+class SessionStub extends Session
 {
+    protected $session;
+    
     public function __construct($data = false)
     {
-        $this->start();
+        $this->session = $data ?: array();    
     }
     
     public function __get($name)
     {
-        if (isset($_SESSION[$name])) {
-            return $_SESSION[$name];
+        if (isset($this->session[$name])) {
+            return $this->session[$name];
         }
         return false;
     }
     
     public function __set($name, $value)
     {
-        $_SESSION[$name] = $value;
+        $this->session[$name] = $value;
     }
     
     public function start()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        
     }
     
     public function delete($name)
     {
-        unset($_SESSION[$name]);
+        unset($this->session[$name]);
     }
     
     public function close()
     {
-        session_write_close();
+        
     }
     
     public function destroy()
     {
-        session_destroy();
+        
     }
 }
