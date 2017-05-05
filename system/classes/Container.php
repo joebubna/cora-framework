@@ -68,7 +68,7 @@ class Container implements \Serializable, \IteratorAggregate, \Countable, \Array
         $this->returnClosure = $returnClosure;
 
         // If data was passed in, then store it.
-        if ($data != false && (is_array($data) || is_object($data))) {
+        if ($data != false && (is_array($data) || $data instanceof \Traversable)) {
             foreach ($data as $item) {
                 $this->add($item, false, $dataKey, true);
             }
@@ -496,6 +496,54 @@ class Container implements \Serializable, \IteratorAggregate, \Countable, \Array
     }
 
 
+    /**
+     *  Returns the largest value.
+     *
+     *  @param key A key on which to sum the when looking at the contents of this Container. 
+     *  @return mixed Value
+     */
+    public function max($key = false)
+    {
+        $collection = $this->getIterator();
+        $max = 0;
+        $valueToReturn = 0;
+        foreach ($collection as $result) {
+            if ($key && isset($result->$key)) {
+                if ($result->$key > $max) {
+                    $max = $result->$key;
+                    $valueToReturn = $result;
+                }
+            }
+            else if ($key && isset($result[$key])) {
+                if ($result[$key] > $max) {
+                    $max = $result[$key];    
+                    $valueToReturn = $result;
+                }
+            }
+            else {
+                if ($result > $max) {
+                    $max = $result;
+                    $valueToReturn = $result;
+                }
+            }
+        }
+        return $valueToReturn;
+    }
+
+
+    /**
+     *  Returns the smallest value.
+     *
+     *  @param key A key on which to sum the when looking at the contents of this Container. 
+     *  @return mixed Value
+     */
+    public function min($key = false)
+    {
+        $sortedCollection = $this->sort($key, 'desc');
+        return $sortedCollection->get(0);
+    }
+
+
 
     ////////////////////////////////////////////////////////////////////////
     //  DATA FILTERING AND MANIPULATION (Returns instance of Container)
@@ -601,6 +649,45 @@ class Container implements \Serializable, \IteratorAggregate, \Countable, \Array
         $this->mergesort($this->content, array($this, 'compare'));
         $this->contentKeys = array_keys($this->content);
         return $this;
+    }
+
+
+    /**
+     *  Map callback to data.
+     *
+     *  @param callback A callable function.
+     *  @return A collection
+     */
+    public function map($callback)
+    {
+        $collection = $this->getIterator();
+        $mutatedCollection = new Container();
+
+        foreach($collection as $prop => $result) {
+            $aValue = $callback($result, $prop);
+            $mutatedCollection->add($aValue);
+        }
+        return $mutatedCollection;
+    }  
+
+
+    /**
+     *  Filter data to that which passes the provided callback.
+     *
+     *  @param callback A callable function.
+     *  @return A collection
+     */
+    public function filter($callback)
+    {
+        $collection = $this->getIterator();
+        $mutatedCollection = new Container();
+
+        foreach($collection as $prop => $result) {
+            if ($callback($result, $prop)) {
+                $mutatedCollection->add($result);
+            }
+        }
+        return $mutatedCollection;
     }
 
 
