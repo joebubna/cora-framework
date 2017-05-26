@@ -155,8 +155,12 @@ class Model
                         $relatedObj = $this->fetchRelatedObj($def['model']);
 
                         // Populate the new obj with data we have about it (should only be primaryKey/ID)
-                        $relatedObj->_populate([$relatedObj->getPrimaryKey() => $this->model_data[$name]]);
-                        $this->$name = $relatedObj;
+                        //$relatedObj->_populate([$relatedObj->getPrimaryKey() => $this->model_data[$name]]);
+                        // $this->$name = $relatedObj;
+
+                        // Fetch related object in whole 
+                        $relObjRepo = $relatedObj->getRepository(true);
+                        $this->$name = $relObjRepo->find($this->model_data[$name]);
                     }
                 }
 
@@ -444,6 +448,20 @@ class Model
     }
 
 
+    /**
+     *  Not intended to replace get_class! This assumes your model namespace starts with "models"
+     *  and you want the classname minus the Models part. 
+     *  If get_class returns "Models\Tests\User", this would return "Tests\User".
+     */
+    function getFullClassName($class = false)
+    {
+        if ($class == false) { $class = $this; }
+        $className = get_class($class);
+        if ($pos = strpos($className, '\\')) return substr($className, $pos + 1);
+        return $className;
+    }
+
+
     public function fetchRelatedObj($objFullName)
     {
         // Load and set cora config.
@@ -670,6 +688,18 @@ class Model
             return $this->model_attributes[$attributeName]['field'];
         }
         return $attributeName;
+    }
+
+
+    /**
+     *  "Touches" any related models to force them to be grabbed from the persistance layer.
+     */
+    public function loadAll()
+    {
+        $this->data->id = $this->id;
+        foreach ($this->model_attributes as $key => $value) {
+            $temp = $this->$key;
+        }
     }
 
 
