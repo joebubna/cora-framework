@@ -450,7 +450,7 @@ class Db_MySQL extends Database
         }
                   
         // If SELECT
-        $this->queryStringFromArray('selects', '', ', ');
+        $this->queryStringFromArray('selects', '', ', ', $this->quoteValues);
         
         // Determine Table(s)
         $this->queryStringFromArray('tables', ' FROM ', ', ');
@@ -736,7 +736,12 @@ class Db_MySQL extends Database
             }
         }
         else {
-            $item = $this->clean($this->{$dataMember}[$offset]);
+            if ($quote) {
+                $item = $this->clean($this->{$dataMember}[$offset]);
+            } else {
+                $item = $this->{$dataMember}[$offset];
+            }
+            
             if ($dataMember == 'inserts') {
                 $item = '`'.$item.'`';
             }

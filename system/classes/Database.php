@@ -6,6 +6,9 @@ class Database
     public static $defaultDb;
     public static $testingDb;
 
+    // For allowing unquoted select items
+    public $quoteValues = true;
+
     protected $tables;
     protected $selects;
     protected $updates;
@@ -311,6 +314,8 @@ class Database
 
         $this->customQuery  = '';
         $this->customValues = [];
+
+        $this->quoteValues = true;
     }
 
 
