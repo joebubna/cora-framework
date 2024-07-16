@@ -1,22 +1,26 @@
 <?PHP
+namespace Cora;
 
-class Cora {
+class Controller {
 
     protected $load;
     protected $data;
+    protected $site;
+    protected $input;
+    protected $config;
 
     public function __construct($container = false)
     {
         // Blank objects for storing stuff in.
-        $this->data = new stdClass(); // Is passed in to Views
-        $this->site = new stdClass(); // Is for storing things such as the logged in User, etc.
+        $this->data = new \stdClass(); // Is passed in to Views
+        $this->site = new \stdClass(); // Is for storing things such as the logged in User, etc.
 
         // If site specific data was passed along, store it.
         $this->data->site = $container;
 
         // Init useful Cora classes
-        $this->load = new Cora\Load();
-        $this->input = new Cora\Input();
+        $this->load = new Load();
+        $this->input = new Input();
 
 
         // Store config settings as data member.

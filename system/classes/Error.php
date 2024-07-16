@@ -3,7 +3,7 @@ namespace Cora;
 /**
 * 
 */
-class Error extends \Cora
+class Error extends \Cora\Controller
 {
     public function handle($errorType)
     {
